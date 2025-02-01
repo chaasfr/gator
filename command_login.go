@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"strings"
 )
@@ -10,9 +11,16 @@ func handlerLogin(s *State, cmd Command) error {
 		return fmt.Errorf("error login: a username is required")
 	}
 	username := strings.Join(cmd.args, " ")
-	if err := s.conf.SetUser(username); err != nil {
+
+	user, err := s.dbQueries.GetUser(context.Background(), username)
+	if err != nil {
+		return fmt.Errorf("error loging in %s - user not found. %w", username, err)
+	}
+
+	if err := s.conf.SetUser(user.Name); err != nil {
 		return err
 	}
+
 	fmt.Printf("user set to %s\n", username)
 
 	return nil
