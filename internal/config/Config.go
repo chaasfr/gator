@@ -12,16 +12,28 @@ type Config struct {
 	CurrentUserName string `json:"current_user_name"`
 }
 
+func getConfigFilePath() (string, error) {
+	folder,err := os.UserHomeDir()
+	if err != nil {
+		return "",fmt.Errorf("error finding home dir %w", err)
+	}
+	return fmt.Sprintf("%s/%s",folder,GatorConfigPath), nil
+}
+
 func Read() (*Config, error){
-	configBytes, err := os.ReadFile(GatorConfigPath)
+	url, err := getConfigFilePath()
+	if err != nil {
+		return nil, err
+	}
+	configBytes, err := os.ReadFile(url)
 
 	if err != nil {
-		return nil, fmt.Errorf("cannot read config at %s: %w", GatorConfigPath, err)
+		return nil, fmt.Errorf("cannot read config at %s: %w", url, err)
 	}
 
 	var conf Config
 	if err := json.Unmarshal(configBytes, &conf); err != nil {
-		return nil, fmt.Errorf("cannot parse config at %s: %w", GatorConfigPath, err)
+		return nil, fmt.Errorf("cannot parse config at %s: %w", url, err)
 	}
 	return &conf, nil
 }
@@ -37,9 +49,13 @@ func write(conf *Config) error {
 		return fmt.Errorf("cannot marshal config - %w", err)
 	}
 
-	err = os.WriteFile(GatorConfigPath, confBytes, 0644)
+	url, err := getConfigFilePath()
 	if err != nil {
-		return fmt.Errorf("cannot save file %s - %w", GatorConfigPath, err)
+		return err
+	}
+	err = os.WriteFile(url, confBytes, 0644)
+	if err != nil {
+		return fmt.Errorf("cannot save file %s - %w", url, err)
 	}
 
 	return nil

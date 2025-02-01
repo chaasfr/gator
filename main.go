@@ -2,22 +2,30 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/chaasfr/gator/internal/config"
+	"os"
 )
 
 func main() {
-	conf, err := config.Read()
+	s, err := InitState()
 	if err != nil {
 		fmt.Println(err)
 	}
+	cmds := InitCmds()
 
-	conf.SetUser("laBaguette")
+	cmds.register("login",handlerLogin)
 
-	conf, err = config.Read()
-	if err != nil {
-		fmt.Println(err)
+	osArgs := os.Args
+	if len(osArgs) < 2 {
+		fmt.Printf("error: not enough argument, received %s\n", osArgs)
+		os.Exit(1)
 	}
 
-	fmt.Println(conf)
+	command := Command{
+		osArgs[1],
+		osArgs[2:],
+	}
+	if err := cmds.run(s, command); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
