@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func handlerLogin(s *State, cmd Command) error {
+func HandlerLogin(s *State, cmd Command) error {
 	if len(cmd.args) == 0 {
 		return fmt.Errorf("error login: a username is required")
 	}

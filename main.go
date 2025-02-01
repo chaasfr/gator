@@ -1,12 +1,11 @@
 package main
 
-import _ "github.com/lib/pq"
-
 import (
 	"fmt"
 	"os"
-)
 
+	_ "github.com/lib/pq"
+)
 
 func main() {
 	s, err := InitState()
@@ -16,8 +15,9 @@ func main() {
 	}
 	cmds := InitCmds()
 
-	cmds.register("login",handlerLogin)
-	cmds.register("register", handlerRegister)
+	cmds.register("login", HandlerLogin)
+	cmds.register("register", HandlerRegister)
+	cmds.register("reset", HandlerReset)
 
 	osArgs := os.Args
 	if len(osArgs) < 2 {
