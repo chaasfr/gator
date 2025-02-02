@@ -31,7 +31,8 @@ func HandlerAddFeed(s *State, cmd Command) error {
 	if err != nil {
 		return fmt.Errorf("error adding feed: %w", err)
 	}
-	fmt.Println(feed)
 
-	return nil
+	fmt.Println(feed)
+	
+	return CreateFollow(s, user, feed)
 }

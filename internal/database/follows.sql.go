@@ -69,7 +69,7 @@ func (q *Queries) CreateFeedFollow(ctx context.Context, arg CreateFeedFollowPara
 }
 
 const getFeedFollowsForUser = `-- name: GetFeedFollowsForUser :many
-select u.name, f.name 
+select u.name as username, f.name as feedname
 from feed_follows as ff
 inner join users as u on ff.user_id = u.id
 inner join feeds as f on ff.feed_id = f.id
@@ -77,8 +77,8 @@ where ff.user_id = $1
 `
 
 type GetFeedFollowsForUserRow struct {
-	Name   string
-	Name_2 string
+	Username string
+	Feedname string
 }
 
 func (q *Queries) GetFeedFollowsForUser(ctx context.Context, userID uuid.UUID) ([]GetFeedFollowsForUserRow, error) {
@@ -90,7 +90,7 @@ func (q *Queries) GetFeedFollowsForUser(ctx context.Context, userID uuid.UUID) (
 	var items []GetFeedFollowsForUserRow
 	for rows.Next() {
 		var i GetFeedFollowsForUserRow
-		if err := rows.Scan(&i.Name, &i.Name_2); err != nil {
+		if err := rows.Scan(&i.Username, &i.Feedname); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
