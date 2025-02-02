@@ -57,7 +57,7 @@ const getPostsForUser = `-- name: GetPostsForUser :many
 SELECT posts.id, posts.created_at, posts.updated_at, title, url, description, published_at, posts.feed_id, ff.id, ff.created_at, ff.updated_at, user_id, ff.feed_id from posts
 inner join feed_follows as ff on posts.feed_id = ff.feed_id
 where ff.user_id = $1
-order by published_at
+order by published_at DESC
 limit $2
 `
 

@@ -7,5 +7,5 @@ RETURNING *;
 SELECT * from posts
 inner join feed_follows as ff on posts.feed_id = ff.feed_id
 where ff.user_id = $1
-order by published_at
+order by published_at DESC
 limit $2;
