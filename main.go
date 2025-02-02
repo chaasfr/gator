@@ -22,6 +22,8 @@ func main() {
 	cmds.register("agg", HandlerAgg)
 	cmds.register("addfeed", HandlerAddFeed)
 	cmds.register("feeds", HandlerFeeds)
+	cmds.register("follow", HandlerFollow)
+	cmds.register("following", HandlerFollowing)
 
 	osArgs := os.Args
 	if len(osArgs) < 2 {

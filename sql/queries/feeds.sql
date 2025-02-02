@@ -13,3 +13,6 @@ RETURNING *;
 -- name: GetFeeds :many
 select feeds.name as name, feeds.url as url, users.name as username from feeds
 left join users on feeds.user_id = users.id;
+
+-- name: GetFeedIdFromUrl :one
+select * from feeds where url= $1 order by created_at asc limit 1;
