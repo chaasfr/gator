@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
-
+	"strings"
 	"github.com/chaasfr/gator/internal/database"
 	"github.com/chaasfr/gator/internal/rss"
+	"github.com/google/uuid"
 )
 
 func HandlerAgg(s *State, cmd Command) error {
@@ -56,8 +58,41 @@ func scrapeFeeds(s *State) error {
 	}
 
 	for _, item := range rssFeed.Channel.Item{
-		fmt.Printf("- %s\n", item.Title)
+		err := savePost(s, item, feed.ID)
+		if err != nil {
+			return err
+		}
 	}
 
+	return nil
+}
+
+func savePost(s *State, ri rss.RSSItem, feedID uuid.UUID) error {
+	publishedAt, err := time.Parse(time.RFC1123Z, ri.PubDate)
+	
+	if err != nil {
+		return fmt.Errorf("error parsing publishedAt %s", ri.PubDate)
+	}
+
+	qpCreatePost := database.CreatePostParams{
+		ID:          uuid.New(),
+		CreatedAt:   time.Now(),
+		Title:       sql.NullString{String: ri.Title, Valid: true},
+		Url:         ri.Link,
+		Description: sql.NullString{String: ri.Description, Valid: true},
+		PublishedAt: publishedAt,
+		FeedID:      feedID,
+	}
+
+	post, err := s.dbQueries.CreatePost(context.Background(), qpCreatePost)
+	if err != nil && strings.Contains(err.Error(), "duplicate key") {
+		fmt.Printf("duplicate keys - %s\n", ri.Title)
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("error saving post %s: %w", ri.Title, err)
+	}
+
+	fmt.Printf("saved post %s", post.Title.String)
 	return nil
 }
