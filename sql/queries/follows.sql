@@ -20,3 +20,20 @@ from feed_follows as ff
 inner join users as u on ff.user_id = u.id
 inner join feeds as f on ff.feed_id = f.id
 where ff.user_id = $1;
+
+
+-- name: DeleteFeedFollow :one
+WITH feed_found AS (
+    SELECT id as feed_id
+    FROM feeds 
+    WHERE url = $2
+), 
+deleted AS (
+    DELETE FROM feed_follows as ff
+    USING feed_found
+    WHERE ff.user_id = $1 
+      AND ff.feed_id = feed_found.feed_id
+    RETURNING ff.*
+)
+SELECT COUNT(*) 
+FROM deleted;

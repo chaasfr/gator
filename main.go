@@ -24,6 +24,7 @@ func main() {
 	cmds.register("feeds", HandlerFeeds)
 	cmds.register("follow", middlewareLoggedIn(HandlerFollow))
 	cmds.register("following", middlewareLoggedIn(HandlerFollowing))
+	cmds.register("unfollow", middlewareLoggedIn(HandlerUnfollow))
 
 	osArgs := os.Args
 	if len(osArgs) < 2 {
