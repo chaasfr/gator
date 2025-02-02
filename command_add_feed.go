@@ -9,13 +9,9 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandlerAddFeed(s *State, cmd Command) error {
+func HandlerAddFeed(s *State, cmd Command, user database.User) error {
 	if len(cmd.args) < 2 {
 		return fmt.Errorf("too few argument - usage: addfeed [name] [url]")
-	}
-	user, err := s.dbQueries.GetUser(context.Background(), s.conf.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("error getting current user: %w", err)
 	}
 
 	queryParams := database.CreateFeedParams{
@@ -33,6 +29,6 @@ func HandlerAddFeed(s *State, cmd Command) error {
 	}
 
 	fmt.Println(feed)
-	
+
 	return CreateFollow(s, user, feed)
 }

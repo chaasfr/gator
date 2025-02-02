@@ -20,10 +20,10 @@ func main() {
 	cmds.register("reset", HandlerReset)
 	cmds.register("users", HandlerUsers)
 	cmds.register("agg", HandlerAgg)
-	cmds.register("addfeed", HandlerAddFeed)
+	cmds.register("addfeed", middlewareLoggedIn(HandlerAddFeed))
 	cmds.register("feeds", HandlerFeeds)
-	cmds.register("follow", HandlerFollow)
-	cmds.register("following", HandlerFollowing)
+	cmds.register("follow", middlewareLoggedIn(HandlerFollow))
+	cmds.register("following", middlewareLoggedIn(HandlerFollowing))
 
 	osArgs := os.Args
 	if len(osArgs) < 2 {

@@ -26,7 +26,7 @@ func CreateFollow(s *State, user database.User, feed database.Feed) error {
 	return nil
 }
 
-func HandlerFollow(s *State, cmd Command) error {
+func HandlerFollow(s *State, cmd Command, user database.User) error {
 	if len(cmd.args) == 0 {
 		return fmt.Errorf("too few argument. Usage: follow [url]")
 	}
@@ -37,10 +37,5 @@ func HandlerFollow(s *State, cmd Command) error {
 		return fmt.Errorf("error feed %s not found: %w", feedURL, err)
 	}
 
-	user, err := s.dbQueries.GetUser(context.Background(), s.conf.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("error cannot get current user: %w", err)
-	}
-	
 	return CreateFollow(s, user, feed)
 }
