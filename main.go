@@ -20,6 +20,7 @@ func main() {
 	cmds.register("reset", HandlerReset)
 	cmds.register("users", HandlerUsers)
 	cmds.register("agg", HandlerAgg)
+	cmds.register("addfeed", HandlerAddFeed)
 
 	osArgs := os.Args
 	if len(osArgs) < 2 {
